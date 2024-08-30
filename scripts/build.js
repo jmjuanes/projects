@@ -41,6 +41,7 @@ const extractRepoData = repo => ({
 
 // get user data
 export const getData = async () => {
+    const reposCache = new Map();
     const data = {
         updated_at: getUpdatedDate(),
     };
@@ -48,24 +49,64 @@ export const getData = async () => {
     const octokit = new Octokit({
         auth: process?.env?.GITHUB_TOKEN || env.GITHUB_TOKEN,
     });
+    // fetch repository
+    const fetchRepo = async (owner, name) => {
+        if (!reposCache.has(`${owner}/${name}`)) {
+            const repoRequest = await octokit.request("GET /repos/{owner}/{name}", {
+                owner: owner,
+                name: name,
+            });
+            reposCache.set(`${owner}/${name}`, extractRepoData(repoRequest.data));
+        }
+        return reposCache.get(`${owner}/${name}`);
+    };
     // 1. get user information
     const userRequest = await octokit.request("/user");
     data.user = {
         name: userRequest.data.name ?? userRequest.data.login,
         username: userRequest.data.login,
         avatar: userRequest.data.avatar_url,
-        // profile: userRequest.data.html_url,
+        url: userRequest.data.html_url,
     };
     // 2. get featured repositories
     const featuredRepos = (process.env.FEATURED_REPOS || env.FEATURED_REPOS || "").split(",").filter(Boolean);
     if (featuredRepos.length > 0) {
         data.featured = []; // initialized featured repost list
         for (let i = 0; i < featuredRepos.length; i++) {
+            const repoName = featuredRepos[i];
             const repoRequest = await octokit.request("GET /repos/{owner}/{repo}", {
                 owner: featuredRepos[i].trim().split("/")[0],
                 repo: featuredRepos[i].trim().split("/")[1],
             });
-            data.featured.push(extractRepoData(repoRequest.data));
+            reposCache.set(repoName, extractRepoData(repoRequest.data));
+            data.featured.push(reposCache.get(repoName));
+        }
+    }
+    // 3. get contributions
+    const contributionsLimit = 10;
+    const contributionsRequest = await octokit.request("GET /search/issues", {
+        q: `type:pr+author:"${data.user.username}"`,
+        per_page: 50,
+        page: 1,
+    });
+    // filter out closed PRs that are not merged
+    const filteredPrs = contributionsRequest.data.items.filter(pr => {
+        return !(pr.state === "closed" && !pr.pull_request?.merged_at);
+    });
+    if (filteredPrs.length > 0) {
+        data.contributions = [];
+        for (let i = 0; i < Math.min(filteredPrs.length, contributionsLimit); i++) {
+            const pr = filteredPrs[i];
+            const [owner, name] = pr.repository_url.split("/").slice(-2);
+            const repo = await fetchRepo(owner, name);
+            data.contributions.push({
+                repo: repo,
+                title: pr.title,
+                url: pr.html_url,
+                created_at: pr.created_at,
+                // state: pr.pull_request?.merged_at ? 'merged' : pr.draft ? 'draft' : pr.state as 'open' | 'closed',
+                number: pr.number,
+            });
         }
     }
     // return parsed data

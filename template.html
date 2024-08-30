@@ -63,6 +63,34 @@
                 {{/each}}
             </div>
             {{/if}}
+            {{#if contributions}}
+            <div class="mb-16 last:mb-0">
+                <div class="text-xl font-bold mb-3">Recent contributions</div>
+                {{#each contributions}}
+                <div class="flex items-center gap-4 mb-4">
+                    <a href="{{repo.url}}" target="_blank" class="block w-12 shrink-0">
+                        <img src="{{repo.owner.avatar}}" class="w-12 h-12 rounded-md" />
+                    </a>
+                    <div class="w-full">
+                        <a href="{{url}}" target="_blank" class="flex items-center gap-1 no-underline">
+                            <div class="text-neutral-950">{{title}}</div>
+                        </a>
+                        <a href="{{repo.url}}" target="_blank" class="flex items-center gap-1 no-underline text-sm">
+                            <div class="text-neutral-600">{{repo.owner.username}}</div>
+                            <div class="text-neutral-600">/</div>
+                            <div class="text-neutral-950">{{repo.name}}</div>
+                            <div class="flex items-center gap-1">
+                                <div class="flex items-center">
+                                    <svg width="1em" height="1em"><use xlink:href="/sprite.svg#star"></use></svg>
+                                </div>
+                                <div class="leading-none">{{stars}}</div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                {{/each}}
+            </div>
+            {{/if}}
         </main>
         <div class="h-px w-full max-w-40 bg-neutral-200 mx-auto"></div>
         <footer class="py-16">
