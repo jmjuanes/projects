@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en" style="overscroll-behavior-x:none;">
+<head>
+    <meta charSet="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no">
+    <meta name="title" content="{{site.title}}">
+    <meta name="description" content="{{site.description}}">
+    <meta property="og:site_name" content="josemi.xyz">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{site.url}}">
+    <meta property="og:description" content="{{site.description}}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap">
+    <link rel="stylesheet" href="/low.css">
+    <title>{{user.name}}</title>
+</head>
+<body class="m-0 p-0 font-inter leading-normal text-neutral-900 bg-white">
+    <div class="w-full max-w-3xl mx-auto px-8">
+        <header class="py-16 flex flex-col items-center gap-2">
+            <div class="mb-2">
+                <img src="{{user.avatar}}" class="w-20 h-20 rounded-full" />
+            </div>
+            <div class="text-center text-2xl leading-tight mb-0">
+                <b>{{user.name}}</b> is working on...
+            </div>
+            <div class="text-center text-sm text-neutral-600">
+                <span>Repositories in GitHub where <b>@{{user.username}}</b> is currently working.</span>
+            </div>
+            <div class="flex items-center justify-center gap-2">
+                <a href="{{user.url}}" target="_blank" class="no-underline">
+                    <img src="/github.svg" class="w-6 h-6" />
+                </a>
+            </div>
+        </header>
+        <main class="py-0">
+            {{#each featured}}
+            <div class="flex items-center gap-4 mb-4">
+                <a href="{{url}}" target="_blank" class="block w-12 shrink-0">
+                    <img src="{{owner.avatar}}" class="w-12 h-12 rounded-md" />
+                </a>
+                <div class="w-full">
+                    <a href="{{url}}" target="_blank" class="flex items-center gap-1 no-underline">
+                        <div class="text-neutral-600">{{owner.username}}</div>
+                        <div class="text-neutral-600">/</div>
+                        <div class="text-neutral-950">{{name}}</div>
+                    </a>
+                    {{#if description}}
+                    <div class="text-sm text-neutral-600">{{description}}</div>
+                    {{/if}}
+                    <div class="flex gap-4 text-neutral-600 text-xs leading-none mt-1">
+                        <div class="flex items-center gap-1">
+                            <div class="flex items-center">
+                                <svg width="1em" height="1em"><use xlink:href="/sprite.svg#star"></use></svg>
+                            </div>
+                            <div class="leading-none">{{stars}}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {{/each}}
+        </main>
+        <footer class="py-16">
+            <div class="text-xs text-neutral-600 text-center">
+                Last updated: {{updated_at}}.
+            </div>
+        </footer>
+    </div>
+</body>
+</html>
