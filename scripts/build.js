@@ -85,6 +85,8 @@ export const getData = async () => {
     }
     // 3. get contributions
     const contributionsLimit = parseInt(process.env.CONTRIBUTIONS_LIMIT ?? env.CONTRIBUTIONS_LIMIT ?? 0) || 0;
+    // TODO: we would need to review this section, to check if we need to perform an additional query (or queries)
+    // to get more contributions, if all of them are excluded because are on private repos or are cancelled PRs
     const contributionsRequest = await octokit.request("GET /search/issues", {
         q: `type:pr+author:"${data.user.username}"`,
         per_page: 50,
