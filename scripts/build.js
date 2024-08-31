@@ -29,6 +29,7 @@ const getUpdatedDate = () => {
 const extractRepoData = repo => ({
     name: repo.name,
     description: repo.description || "",
+    private: repo.private,
     url: repo.html_url,
     owner: {
         username: repo.owner.login,
@@ -83,7 +84,7 @@ export const getData = async () => {
         }
     }
     // 3. get contributions
-    const contributionsLimit = 10;
+    const contributionsLimit = parseInt(process.env.CONTRIBUTIONS_LIMIT ?? env.CONTRIBUTIONS_LIMIT ?? 0) || 0;
     const contributionsRequest = await octokit.request("GET /search/issues", {
         q: `type:pr+author:"${data.user.username}"`,
         per_page: 50,
@@ -93,20 +94,23 @@ export const getData = async () => {
     const filteredPrs = contributionsRequest.data.items.filter(pr => {
         return !(pr.state === "closed" && !pr.pull_request?.merged_at);
     });
-    if (filteredPrs.length > 0) {
+    if (filteredPrs.length > 0 && contributionsLimit > 0) {
         data.contributions = [];
-        for (let i = 0; i < Math.min(filteredPrs.length, contributionsLimit); i++) {
+        let addedContributions = 0;
+        for (let i = 0; i < filteredPrs.length && addedContributions < contributionsLimit; i++) {
             const pr = filteredPrs[i];
             const [owner, name] = pr.repository_url.split("/").slice(-2);
             const repo = await fetchRepo(owner, name);
-            data.contributions.push({
-                repo: repo,
-                title: pr.title,
-                url: pr.html_url,
-                created_at: pr.created_at,
-                // state: pr.pull_request?.merged_at ? 'merged' : pr.draft ? 'draft' : pr.state as 'open' | 'closed',
-                number: pr.number,
-            });
+            if (!repo.private) {
+                data.contributions.push({
+                    repo: repo,
+                    title: pr.title,
+                    url: pr.html_url,
+                    // currently we only support "merged" or "open" as PR state
+                    state: pr.pull_request?.merged_at ? "merged" : "open",
+                });
+                addedContributions = addedContributions + 1;
+            }
         }
     }
     // return parsed data
@@ -116,7 +120,7 @@ export const getData = async () => {
 // get data and build site
 getData().then(data => {
     const template = fs.readFileSync(path.join(process.cwd(), "template.html"), "utf8");
-    const content = mikel(template, data);
+    const content = mikel(template, data, {});
     fs.writeFileSync(path.join(process.cwd(), "www/index.html"), content, "utf8");
     fs.writeFileSync(path.join(process.cwd(), "www/api.json"), JSON.stringify(data), "utf8");
 });
