@@ -31,13 +31,14 @@ const extractRepoData = repo => ({
     description: repo.description || "",
     private: repo.private,
     url: repo.html_url,
+    homepage: repo.homepage,
     owner: {
         username: repo.owner.login,
         avatar: repo.owner.avatar_url,
-        // avatar: `https://github.com/${repo.full_name.split("/")[0]}.png`,
     },
     topics: repo.topics || [],
-    stars: repo.stargazers_count,
+    stars_count: repo.stargazers_count || 0,
+    // issues_count: repo.open_issues_count || 0,
 });
 
 // get user data

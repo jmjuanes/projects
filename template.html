@@ -51,11 +51,19 @@
                         <div class="text-sm text-neutral-600">{{description}}</div>
                         {{/if}}
                         <div class="flex gap-4 text-neutral-600 text-xs leading-none mt-1">
+                            {{#if homepage}}
+                            <a href="{{homepage}}" target="_blank" class="flex items-center gap-1 group text-neutral-600">
+                                <div class="flex items-center">
+                                    <svg width="1em" height="1em"><use xlink:href="/sprite.svg#link"></use></svg>
+                                </div>
+                                <div class="leading-none group-hover:underline group-hover:text-neutral-900">{{homepage}}</div>
+                            </a>
+                            {{/if}}
                             <div class="flex items-center gap-1">
                                 <div class="flex items-center">
                                     <svg width="1em" height="1em"><use xlink:href="/sprite.svg#star"></use></svg>
                                 </div>
-                                <div class="leading-none">{{stars}}</div>
+                                <div class="leading-none">{{stars_count}}</div>
                             </div>
                         </div>
                     </div>
