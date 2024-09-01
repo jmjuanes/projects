@@ -41,8 +41,8 @@ const extractRepoData = repo => ({
     // issues_count: repo.open_issues_count || 0,
 });
 
-// get user data
-export const getData = async () => {
+// fetch data
+export const fetchData = async () => {
     const reposCache = new Map();
     const data = {
         updated_at: getUpdatedDate(),
@@ -75,13 +75,11 @@ export const getData = async () => {
     if (featuredRepos.length > 0) {
         data.featured = []; // initialized featured repost list
         for (let i = 0; i < featuredRepos.length; i++) {
-            const repoName = featuredRepos[i];
-            const repoRequest = await octokit.request("GET /repos/{owner}/{repo}", {
-                owner: featuredRepos[i].trim().split("/")[0],
-                repo: featuredRepos[i].trim().split("/")[1],
-            });
-            reposCache.set(repoName, extractRepoData(repoRequest.data));
-            data.featured.push(reposCache.get(repoName));
+            const [owner, name] = featuredRepos[i].trim().split("/");
+            if (owner && name) {
+                const repo = await fetchRepo(owner, name);
+                data.featured.push(repo);
+            }
         }
     }
     // 3. get contributions
@@ -121,7 +119,7 @@ export const getData = async () => {
 };
 
 // get data and build site
-getData().then(data => {
+fetchData().then(data => {
     const template = fs.readFileSync(path.join(process.cwd(), "template.html"), "utf8");
     const content = mikel(template, data, {});
     fs.writeFileSync(path.join(process.cwd(), "www/index.html"), content, "utf8");
