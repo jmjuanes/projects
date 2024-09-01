@@ -70,9 +70,11 @@ export const fetchData = async () => {
         username: userRequest.data.login,
         avatar: userRequest.data.avatar_url,
         url: userRequest.data.html_url,
+        homepage: userRequest.data.blog,
+        location: userRequest.data.location,
     };
     // 2. get featured repositories
-    const featuredRepos = (process.env.FEATURED_REPOS || env.FEATURED_REPOS || "").split(",").filter(Boolean);
+    const featuredRepos = (process.env.FEATURED_REPOSITORIES || env.FEATURED_REPOSITORIES || "").split(",").filter(Boolean);
     if (featuredRepos.length > 0) {
         data.featured = []; // initialized featured repost list
         for (let i = 0; i < featuredRepos.length; i++) {

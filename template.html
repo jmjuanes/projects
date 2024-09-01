@@ -17,25 +17,36 @@
     <div class="w-full max-w-3xl mx-auto px-8">
         <header class="py-16 flex flex-col items-center gap-3">
             <div class="mb-0">
-                <img src="{{user.avatar}}" class="w-20 h-20 rounded-full" />
+                <img src="{{user.avatar}}" class="w-16 h-16 rounded-full" />
             </div>
             <div class="text-center text-2xl leading-tight mb-0">
                 <b>{{user.name}}</b> is working on...
             </div>
             <div class="text-center text-sm text-neutral-600">
-                <span>Repositories in GitHub where <b>@{{user.username}}</b> is currently working.</span>
+                <span>Repositories in GitHub where </span>
+                <a href="{{user.url}}" target="_blank" class="hover:underline font-bold">@{{user.username}}</a> 
+                <span> is currently working.</span>
             </div>
-            <div class="flex items-center justify-center gap-2">
-                <a href="{{user.url}}" target="_blank" class="no-underline">
-                    <img src="/github.svg" class="w-6 h-6" />
+            <div class="flex items-center justify-center gap-3 text-neutral-600 text-sm">
+                {{#if user.homepage}}
+                <a href="{{user.homepage}}" target="_blank" class="flex items-center gap-1 group">
+                    <svg width="1em" height="1em"><use xlink:href="/sprite.svg#link"></use></svg>
+                    <div class="group-hover:text-neutral-900 group-hover:underline">{{user.homepage}}</div>
                 </a>
+                {{/if}}
+                {{#if user.location}}
+                <div class="flex items-center gap-1">
+                    <svg width="1em" height="1em"><use xlink:href="/sprite.svg#location-pin"></use></svg>
+                    <div class="">{{user.location}}</div>
+                </div>
+                {{/if}}
             </div>
         </header>
         <div class="h-px w-full max-w-40 bg-neutral-200 mx-auto"></div>
         <main class="py-8">
             {{#if featured}}
             <div class="mb-16 last:mb-0">
-                <div class="text-xl font-bold mb-3">Featured projects</div>
+                <div class="text-xl font-bold mb-3">Featured repositories</div>
                 {{#each featured}}
                 <div class="flex items-start gap-4 mb-6">
                     <a href="{{url}}" target="_blank" class="block w-12 shrink-0">
@@ -77,6 +88,12 @@
                     </div>
                 </div>
                 {{/each}}
+                <div class="mt-0">
+                    <a href="{{user.url}}?tab=repositories" target="_blank" class="flex items-center gap-1 text-sm text-neutral-600 hover:underline">
+                        <svg width="1em" height="1em"><use xlink:href="/sprite.svg#arrow-up-right"></use></svg>
+                        <span>See all repositories</span>
+                    </a>
+                </div>
             </div>
             {{/if}}
             {{#if contributions}}
