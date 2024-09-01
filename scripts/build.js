@@ -63,6 +63,12 @@ export const fetchData = async () => {
         }
         return reposCache.get(`${owner}/${name}`);
     };
+    // initialize excluded contributions set
+    // It can be a single user or organization (for example 'jmjuanes') or a especifi repo (for example 'jmjuanes/repo')
+    const excludedContributions = new Set();
+    (process.env.CONTRIBUTIONS_EXCLUDED || env.CONTRIBUTIONS_EXCLUDED || "").split(",")
+        .filter(Boolean)
+        .forEach(item => excludedContributions.add(item));
     // 1. get user information
     const userRequest = await octokit.request("/user");
     data.user = {
@@ -94,9 +100,18 @@ export const fetchData = async () => {
         per_page: 50,
         page: 1,
     });
-    // filter out closed PRs that are not merged
+    // Filter out contributions
     const filteredPrs = contributionsRequest.data.items.filter(pr => {
-        return !(pr.state === "closed" && !pr.pull_request?.merged_at);
+        // 1. exclude closed PRs that have not been merged
+        if (!(pr.state === "closed" && !pr.pull_request?.merged_at)) {
+            // 2. check if this contribution is not in the excluded contributions list
+            const [owner, name] = pr.repository_url.split("/").slice(-2);
+            if (!excludedContributions.has(owner) && !excludedContributions.has(owner + "/" + name)) {
+                return true;
+            }
+        }
+        // contribution excluded
+        return false;
     });
     if (filteredPrs.length > 0 && contributionsLimit > 0) {
         data.contributions = [];
