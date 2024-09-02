@@ -27,7 +27,7 @@ jobs:
       - run: yarn install
       - run: yarn build
         env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            GH_TOKEN: ${{ secrets.GH_TOKEN }}
             FEATURED_REPOSITORIES: ${{ vars.FEATURED_REPOSITORIES }}
             CONTRIBUTIONS_LIMIT: ${{ vars.CONTRIBUTIONS_LIMIT }}
             CONTRIBUTIONS_EXCLUDED: ${{ vars.CONTRIBUTIONS_EXCLUDED }}
