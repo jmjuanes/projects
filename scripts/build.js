@@ -50,7 +50,7 @@ export const fetchData = async () => {
     };
     // we can get auth token from env variable or from .env file
     const octokit = new Octokit({
-        auth: process?.env?.GITHUB_TOKEN || env.GITHUB_TOKEN,
+        auth: process?.env?.GH_TOKEN || env.GH_TOKEN,
     });
     // fetch repository
     const fetchRepo = async (owner, name) => {
