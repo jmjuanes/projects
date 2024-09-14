@@ -147,19 +147,36 @@
                         <img src="{{repo.owner.avatar}}" class="w-12 h-12 rounded-md" />
                     </a>
                     <div class="w-full">
-                        <a href="{{url}}" target="_blank" class="group block no-underline align-center">
-                            <span class="inline-flex items-center text-{{#eq state "merged"}}violet{{/eq}}{{#eq state "open"}}green{{/eq}}-500">
-                                <svg width="1em" height="1em">
-                                    <use xlink:href="/sprite.svg#git-pull-request"></use>
-                                </svg>
-                            </span>
-                            <span class="text-neutral-950 group-hover:underline">{{title}}</span>
-                        </a>
-                        <a href="{{repo.url}}" target="_blank" class="group flex items-center gap-1 no-underline text-sm">
+                        <a href="{{repo.url}}" target="_blank" class="group flex items-center gap-1 no-underline">
                             <div class="text-neutral-600">{{repo.owner.username}}</div>
                             <div class="text-neutral-600">/</div>
                             <div class="text-neutral-950 group-hover:underline">{{repo.name}}</div>
                         </a>
+                        {{#if title}}
+                        <div class="text-sm text-neutral-600">{{title}}</div>
+                        {{/if}}
+                        <div class="flex gap-3 text-neutral-600 text-xs leading-none mt-1">
+                            {{#eq state "merged"}}
+                            <a href="{{url}}" target="_blank" class="flex items-center gap-1 group text-violet-600">
+                                <div class="flex items-center">
+                                    {{=icon "git-pull-request"}}
+                                </div>
+                                <div class="leading-none group-hover:underline group-hover:text-violet-900">
+                                    <span>Merged</span>
+                                </div>
+                            </a>
+                            {{/eq}}
+                            {{#eq state "open"}}
+                            <a href="{{url}}" target="_blank" class="flex items-center gap-1 group text-green-600">
+                                <div class="flex items-center">
+                                    {{=icon "git-pull-request"}}
+                                </div>
+                                <div class="leading-none group-hover:underline group-hover:text-green-900">
+                                    <span>Open</span>
+                                </div>
+                            </a>
+                            {{/eq}}
+                        </div>
                     </div>
                 </div>
                 {{/each}}
