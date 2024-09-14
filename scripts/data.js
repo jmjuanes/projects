@@ -167,19 +167,24 @@ export const fetchData = async () => {
                 .filter(event => !!getReleaseCommit(event.payload.commits));
             for (let i = 0; i < events.length && addedReleases < releasesLimit; i++) {
                 const event = events[i];
-                const [owner, name] = event.repo.name.split("/");
-                const repo = await fetchRepo(owner, name);
                 const commit = getReleaseCommit(event.payload.commits);
-                const version = "x.x.x";
-                data.releases.push({
-                    repo: repo,
-                    version: version,
-                    title: commit.message,
-                    sha: commit.sha,
-                    commit: `https://github.com/${event.repo.name}/commit/${commit.sha}`,
-                    created_at: event.created_at,
-                });
-                addedReleases = addedReleases + 1;
+                const version = (commit?.message || "").match(/v?(\d+\.\d+\.\d+(?:-[\w.]+)?)\s*$/)?.[1] || "";
+                if (commit && version) {
+                    const [owner, name] = event.repo.name.split("/");
+                    const repo = await fetchRepo(owner, name);
+                    data.releases.push({
+                        repo: repo,
+                        version: "v" + version,
+                        url: `https://github.com/${owner}/${name}/releases/tag/v${version}`,
+                        commit: {
+                            message: commit.message,
+                            sha: commit.sha,
+                            url: `https://github.com/${owner}/${name}/commit/${commit.sha}`,
+                        },
+                        created_at: event.created_at,
+                    });
+                    addedReleases = addedReleases + 1;
+                }
             }
         }
     }
