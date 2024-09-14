@@ -31,6 +31,8 @@ jobs:
             FEATURED_REPOSITORIES: ${{ vars.FEATURED_REPOSITORIES }}
             CONTRIBUTIONS_LIMIT: ${{ vars.CONTRIBUTIONS_LIMIT }}
             CONTRIBUTIONS_EXCLUDED: ${{ vars.CONTRIBUTIONS_EXCLUDED }}
+            RELEASES_LIMIT: ${{ vars.RELEASES_LIMIT }}
+            RELEASES_EXCLUDED: ${{ vars.RELEASES_EXCLUDED }}
       - uses: actions/upload-pages-artifact@v3
         with:
           path: www
