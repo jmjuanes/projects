@@ -21,6 +21,14 @@ const isExcluded = (excludedSet, repositoryUrl) => {
     return excludedSet.has(owner) || excludedSet.has(owner + "/" + name);
 };
 
+// Get the commit that belongs to a release
+const getReleaseCommit = commits => {
+    const releaseCommit = (commits || []).filter(commit => {
+        return commit.message.includes("release") || commit.message.includes("Release");
+    });
+    return releaseCommit[0] || null;
+};
+
 // get formatted updated date
 const getUpdatedDate = () => {
     const now = new Date();
@@ -136,6 +144,42 @@ export const fetchData = async () => {
                     state: pr.pull_request?.merged_at ? "merged" : "open",
                 });
                 addedContributions = addedContributions + 1;
+            }
+        }
+    }
+    // 4. Get latest releases
+    const releasesLimit = parseInt(process.env?.RELEASES_LIMIT ?? env.RELEASES_LIMIT ?? 0) || 0;
+    if (releasesLimit > 0) {
+        data.releases = [];
+        let addedReleases = 0;
+        for (let page = 0; page <= 5 && addedReleases < releasesLimit; page++) {
+            const eventsRequest = await octokit.request("GET /users/{username}/events", {
+                username: data.user.username,
+                per_page: 100,
+                page: page,
+            });
+            const events = (eventsRequest.data || [])
+                // Get only push events in public repositories
+                .filter(event => event.public && event.type === "PushEvent")
+                // Remove excluded repositories from the list of events
+                .filter(event => !isExcluded(excludedReleases, event.repo.url))
+                // get only commits of releases
+                .filter(event => !!getReleaseCommit(event.payload.commits));
+            for (let i = 0; i < events.length && addedReleases < releasesLimit; i++) {
+                const event = events[i];
+                const [owner, name] = event.repo.name.split("/");
+                const repo = await fetchRepo(owner, name);
+                const commit = getReleaseCommit(event.payload.commits);
+                const version = "x.x.x";
+                data.releases.push({
+                    repo: repo,
+                    version: version,
+                    title: commit.message,
+                    sha: commit.sha,
+                    commit: `https://github.com/${event.repo.name}/commit/${commit.sha}`,
+                    created_at: event.created_at,
+                });
+                addedReleases = addedReleases + 1;
             }
         }
     }
