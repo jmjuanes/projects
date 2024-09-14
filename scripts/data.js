@@ -10,6 +10,17 @@ const env = [".env.example", ".env"]
     .map(file => dotenv.parse(fs.readFileSync(file, "utf8")))
     .reduce((prevEnv, content) => Object.assign(prevEnv, content), {});
 
+// gneerates a set with the excluded repositories, users or orgs
+const getExcludedSet = excludedStr => {
+    return new Set((excludedStr || "").split(",").filter(Boolean));
+};
+
+// checks if the provided repository is excluded
+const isExcluded = (excludedSet, repositoryUrl) => {
+    const [owner, name] = repositoryUrl.split("/").slice(-2);
+    return excludedSet.has(owner) || excludedSet.has(owner + "/" + name);
+};
+
 // get formatted updated date
 const getUpdatedDate = () => {
     const now = new Date();
@@ -62,12 +73,10 @@ export const fetchData = async () => {
         }
         return reposCache.get(`${owner}/${name}`);
     };
-    // initialize excluded contributions set
+    // initialize excluded sets
     // It can be a single user or organization (for example 'jmjuanes') or a especifi repo (for example 'jmjuanes/repo')
-    const excludedContributions = new Set();
-    (process.env.CONTRIBUTIONS_EXCLUDED || env.CONTRIBUTIONS_EXCLUDED || "").split(",")
-        .filter(Boolean)
-        .forEach(item => excludedContributions.add(item));
+    const excludedContributions = getExcludedSet(process.env.CONTRIBUTIONS_EXCLUDED || env.CONTRIBUTIONS_EXCLUDED);
+    const excludedReleases = getExcludedSet(process.env.RELEASES_EXCLUDED || env.RELEASES_EXCLUDED);
     // 1. get user information
     const userRequest = await octokit.request("/user");
     data.user = {
@@ -104,8 +113,7 @@ export const fetchData = async () => {
         // 1. exclude closed PRs that have not been merged
         if (!(pr.state === "closed" && !pr.pull_request?.merged_at)) {
             // 2. check if this contribution is not in the excluded contributions list
-            const [owner, name] = pr.repository_url.split("/").slice(-2);
-            if (!excludedContributions.has(owner) && !excludedContributions.has(owner + "/" + name)) {
+            if (!isExcluded(excludedContributions, pr.repository_url)) {
                 return true;
             }
         }
