@@ -30,13 +30,13 @@
             <div class="flex items-center justify-center gap-3 text-neutral-600 text-sm">
                 {{#if user.homepage}}
                 <a href="{{user.homepage}}" target="_blank" class="flex items-center gap-1 group">
-                    <svg width="1em" height="1em"><use xlink:href="/sprite.svg#link"></use></svg>
+                    {{=icon "link"}}
                     <div class="group-hover:text-neutral-900 group-hover:underline">{{user.homepage}}</div>
                 </a>
                 {{/if}}
                 {{#if user.location}}
                 <div class="flex items-center gap-1">
-                    <svg width="1em" height="1em"><use xlink:href="/sprite.svg#location-pin"></use></svg>
+                    {{=icon "location-pin"}}
                     <div class="">{{user.location}}</div>
                 </div>
                 {{/if}}
@@ -65,21 +65,21 @@
                             {{#if homepage}}
                             <a href="{{homepage}}" target="_blank" class="flex items-center gap-1 group text-neutral-600">
                                 <div class="flex items-center">
-                                    <svg width="1em" height="1em"><use xlink:href="/sprite.svg#link"></use></svg>
+                                    {{=icon "link"}}
                                 </div>
                                 <div class="leading-none group-hover:underline group-hover:text-neutral-900">{{homepage}}</div>
                             </a>
                             {{/if}}
                             <div class="flex items-center gap-1">
                                 <div class="flex items-center">
-                                    <svg width="1em" height="1em"><use xlink:href="/sprite.svg#star"></use></svg>
+                                    {{=icon "star"}}
                                 </div>
                                 <div class="leading-none">{{stars_count}}</div>
                             </div>
                             {{#if license}}
                             <div class="flex items-center gap-1">
                                 <div class="flex items-center">
-                                    <svg width="1em" height="1em"><use xlink:href="/sprite.svg#balance"></use></svg>
+                                    {{=icon "balance"}}
                                 </div>
                                 <div class="leading-none">{{license}}</div>
                             </div>
@@ -90,10 +90,52 @@
                 {{/each}}
                 <div class="mt-0">
                     <a href="{{user.url}}?tab=repositories" target="_blank" class="flex items-center gap-1 text-sm text-neutral-600 hover:underline">
-                        <svg width="1em" height="1em"><use xlink:href="/sprite.svg#arrow-up-right"></use></svg>
+                        {{=icon "arrow-up-right"}}
                         <span>See all repositories</span>
                     </a>
                 </div>
+            </div>
+            {{/if}}
+            {{#if releases}}
+            <div class="mb-16 last:mb-0">
+                <div class="text-xl font-bold mb-3">Latest releases</div>
+                {{#each releases}}
+                <div class="flex items-start gap-4 mb-6">
+                    <a href="{{repo.url}}" target="_blank" class="block w-12 shrink-0">
+                        <img src="{{repo.owner.avatar}}" class="w-12 h-12 rounded-md" />
+                    </a>
+                    <div class="w-full">
+                        <a href="{{repo.url}}" target="_blank" class="group flex items-center gap-1 no-underline">
+                            <div class="text-neutral-600">{{repo.owner.username}}</div>
+                            <div class="text-neutral-600">/</div>
+                            <div class="text-neutral-950 group-hover:underline">{{repo.name}}</div>
+                        </a>
+                        {{#if commit.message}}
+                        <div class="text-sm text-neutral-600">{{commit.message}}</div>
+                        {{/if}}
+                        <div class="flex gap-3 text-neutral-600 text-xs leading-none mt-1">
+                            <a href="{{url}}" target="_blank" class="flex items-center gap-1 group text-neutral-600">
+                                <div class="flex items-center">
+                                    {{=icon "tag"}}
+                                </div>
+                                <div class="leading-none group-hover:underline group-hover:text-neutral-900">
+                                    <span>{{version}}</span>
+                                </div>
+                            </a>
+                            {{#if commit.sha}}
+                            <a href="{{commit.url}}" target="_blank" class="flex items-center gap-1 group text-neutral-600">
+                                <div class="flex items-center">
+                                    {{=icon "git-commit"}}
+                                </div>
+                                <div class="leading-none group-hover:underline group-hover:text-neutral-900">
+                                    <span>{{commit.sha}}</span>
+                                </div>
+                            </a>
+                            {{/if}}
+                        </div>
+                    </div>
+                </div>
+                {{/each}}
             </div>
             {{/if}}
             {{#if contributions}}
@@ -105,19 +147,36 @@
                         <img src="{{repo.owner.avatar}}" class="w-12 h-12 rounded-md" />
                     </a>
                     <div class="w-full">
-                        <a href="{{url}}" target="_blank" class="group block no-underline align-center">
-                            <span class="inline-flex items-center text-{{#eq state "merged"}}violet{{/eq}}{{#eq state "open"}}green{{/eq}}-500">
-                                <svg width="1em" height="1em">
-                                    <use xlink:href="/sprite.svg#git-pull-request"></use>
-                                </svg>
-                            </span>
-                            <span class="text-neutral-950 group-hover:underline">{{title}}</span>
-                        </a>
-                        <a href="{{repo.url}}" target="_blank" class="group flex items-center gap-1 no-underline text-sm">
+                        <a href="{{repo.url}}" target="_blank" class="group flex items-center gap-1 no-underline">
                             <div class="text-neutral-600">{{repo.owner.username}}</div>
                             <div class="text-neutral-600">/</div>
                             <div class="text-neutral-950 group-hover:underline">{{repo.name}}</div>
                         </a>
+                        {{#if title}}
+                        <div class="text-sm text-neutral-600">{{title}}</div>
+                        {{/if}}
+                        <div class="flex gap-3 text-neutral-600 text-xs leading-none mt-1">
+                            {{#eq state "merged"}}
+                            <a href="{{url}}" target="_blank" class="flex items-center gap-1 group text-violet-600">
+                                <div class="flex items-center">
+                                    {{=icon "git-pull-request"}}
+                                </div>
+                                <div class="leading-none group-hover:underline group-hover:text-violet-900">
+                                    <span>Merged</span>
+                                </div>
+                            </a>
+                            {{/eq}}
+                            {{#eq state "open"}}
+                            <a href="{{url}}" target="_blank" class="flex items-center gap-1 group text-green-600">
+                                <div class="flex items-center">
+                                    {{=icon "git-pull-request"}}
+                                </div>
+                                <div class="leading-none group-hover:underline group-hover:text-green-900">
+                                    <span>Open</span>
+                                </div>
+                            </a>
+                            {{/eq}}
+                        </div>
                     </div>
                 </div>
                 {{/each}}
