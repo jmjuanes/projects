@@ -50,7 +50,7 @@ const extractRepoData = repo => ({
     private: repo.private,
     url: repo.html_url,
     homepage: repo.homepage,
-    license: repo?.license?.name,
+    license: (repo?.license?.name || "").replace("License", "").trim(),
     owner: {
         username: repo.owner.login,
         avatar: repo.owner.avatar_url,
