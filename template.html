@@ -19,7 +19,7 @@
             <div class="mb-0">
                 <img src="{{user.avatar}}" class="w-16 h-16 rounded-full" />
             </div>
-            <div class="text-center text-2xl leading-tight mb-0">
+            <div class="text-center text-xl sm:text-2xl leading-tight mb-0">
                 <b>{{user.name}}</b> is working on...
             </div>
             <div class="text-center text-sm text-neutral-600">
@@ -27,7 +27,7 @@
                 <a href="{{user.url}}" target="_blank" class="hover:underline font-bold">@{{user.username}}</a> 
                 <span> is currently working.</span>
             </div>
-            <div class="flex items-center justify-center gap-3 text-neutral-600 text-sm">
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-3 text-neutral-600 text-sm">
                 {{#if user.homepage}}
                 <a href="{{user.homepage}}" target="_blank" class="flex items-center gap-1 group">
                     {{=icon "link"}}
@@ -53,7 +53,7 @@
                         <img src="{{owner.avatar}}" class="w-12 h-12 rounded-md" />
                     </a>
                     <div class="w-full">
-                        <a href="{{url}}" target="_blank" class="group flex items-center gap-1 no-underline">
+                        <a href="{{url}}" target="_blank" class="group flex items-center gap-1 no-underline leading-none">
                             <div class="text-neutral-600">{{owner.username}}</div>
                             <div class="text-neutral-600">/</div>
                             <div class="text-neutral-950 group-hover:underline">{{name}}</div>
@@ -61,7 +61,7 @@
                         {{#if description}}
                         <div class="text-sm text-neutral-600">{{description}}</div>
                         {{/if}}
-                        <div class="flex gap-3 text-neutral-600 text-xs leading-none mt-1">
+                        <div class="flex gap-3 flex-wrap text-neutral-600 text-xs leading-none mt-1">
                             {{#if homepage}}
                             <a href="{{homepage}}" target="_blank" class="flex items-center gap-1 group text-neutral-600">
                                 <div class="flex items-center">
@@ -105,7 +105,7 @@
                         <img src="{{repo.owner.avatar}}" class="w-12 h-12 rounded-md" />
                     </a>
                     <div class="w-full">
-                        <a href="{{repo.url}}" target="_blank" class="group flex items-center gap-1 no-underline">
+                        <a href="{{repo.url}}" target="_blank" class="group flex items-center gap-1 no-underline leading-none">
                             <div class="text-neutral-600">{{repo.owner.username}}</div>
                             <div class="text-neutral-600">/</div>
                             <div class="text-neutral-950 group-hover:underline">{{repo.name}}</div>
@@ -127,7 +127,7 @@
                                 <div class="flex items-center">
                                     {{=icon "git-commit"}}
                                 </div>
-                                <div class="leading-none group-hover:underline group-hover:text-neutral-900">
+                                <div class="leading-none group-hover:underline group-hover:text-neutral-900 truncate max-w-24 sm:max-w-96">
                                     <span>{{commit.sha}}</span>
                                 </div>
                             </a>
@@ -147,7 +147,7 @@
                         <img src="{{repo.owner.avatar}}" class="w-12 h-12 rounded-md" />
                     </a>
                     <div class="w-full">
-                        <a href="{{repo.url}}" target="_blank" class="group flex items-center gap-1 no-underline">
+                        <a href="{{repo.url}}" target="_blank" class="group flex items-center gap-1 no-underline leading-none">
                             <div class="text-neutral-600">{{repo.owner.username}}</div>
                             <div class="text-neutral-600">/</div>
                             <div class="text-neutral-950 group-hover:underline">{{repo.name}}</div>
@@ -157,7 +157,7 @@
                         {{/if}}
                         <div class="flex gap-3 text-neutral-600 text-xs leading-none mt-1">
                             {{#eq state "merged"}}
-                            <a href="{{url}}" target="_blank" class="flex items-center gap-1 group text-violet-600">
+                            <a href="{{url}}" target="_blank" class="flex items-center gap-1 group text-violet-600 bg-violet-100 py-1 px-2 rounded-full">
                                 <div class="flex items-center">
                                     {{=icon "git-pull-request"}}
                                 </div>
@@ -167,7 +167,7 @@
                             </a>
                             {{/eq}}
                             {{#eq state "open"}}
-                            <a href="{{url}}" target="_blank" class="flex items-center gap-1 group text-green-600">
+                            <a href="{{url}}" target="_blank" class="flex items-center gap-1 group text-green-600 bg-green-100 py-1 px-2 rounded-full">
                                 <div class="flex items-center">
                                     {{=icon "git-pull-request"}}
                                 </div>
