@@ -151,8 +151,8 @@ export const fetchData = async () => {
     const releasesLimit = parseInt(process.env?.RELEASES_LIMIT ?? env.RELEASES_LIMIT ?? 0) || 0;
     if (releasesLimit > 0) {
         data.releases = [];
-        let addedReleases = 0;
-        for (let page = 0; page <= 5 && addedReleases < releasesLimit; page++) {
+        const addedReleases = new Set();
+        for (let page = 0; page <= 5 && addedReleases.size < releasesLimit; page++) {
             const eventsRequest = await octokit.request("GET /users/{username}/events", {
                 username: data.user.username,
                 per_page: 100,
@@ -165,11 +165,11 @@ export const fetchData = async () => {
                 .filter(event => !isExcluded(excludedReleases, event.repo.url))
                 // get only commits of releases
                 .filter(event => !!getReleaseCommit(event.payload.commits));
-            for (let i = 0; i < events.length && addedReleases < releasesLimit; i++) {
+            for (let i = 0; i < events.length && addedReleases.size < releasesLimit; i++) {
                 const event = events[i];
                 const commit = getReleaseCommit(event.payload.commits);
                 const version = (commit?.message || "").match(/v?(\d+\.\d+\.\d+(?:-[\w.]+)?)\s*$/)?.[1] || "";
-                if (commit && version) {
+                if (commit && version && !addedReleases.has(event.repo.name)) {
                     const [owner, name] = event.repo.name.split("/");
                     const repo = await fetchRepo(owner, name);
                     data.releases.push({
@@ -183,7 +183,7 @@ export const fetchData = async () => {
                         },
                         created_at: event.created_at,
                     });
-                    addedReleases = addedReleases + 1;
+                    addedReleases.add(event.repo.name);
                 }
             }
         }
