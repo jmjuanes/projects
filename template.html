@@ -63,7 +63,7 @@
                         {{#if description}}
                         <div class="text-sm text-neutral-600">{{description}}</div>
                         {{/if}}
-                        <div class="flex gap-3 flex-wrap text-neutral-600 text-xs leading-none mt-1">
+                        <div class="flex gap-3 flex-wrap text-neutral-600 text-xs leading-none mt-2">
                             {{#if homepage}}
                             <a href="{{homepage}}" target="_blank" class="flex items-center gap-1 group text-neutral-600">
                                 <div class="flex items-center">
@@ -113,7 +113,7 @@
                                 <div class="text-neutral-600">/</div>
                                 <div class="text-neutral-950 group-hover:underline">{{repo.name}}</div>
                             </a>
-                            <div class="text-xs text-neutral-600 font-medium" data-date="{{created_at}}"></div>
+                            <div class="hidden sm:block text-xs text-neutral-600 font-medium" data-date="{{created_at}}"></div>
                         </div>
                         {{#if commit.message}}
                         <div class="text-sm text-neutral-600">{{commit.message}}</div>
@@ -151,17 +151,17 @@
                     <a href="{{repo.url}}" target="_blank" class="block w-12 shrink-0">
                         <img src="{{repo.owner.avatar}}" class="w-12 h-12 rounded-md" />
                     </a>
-                    <div class="w-full">
+                    <div class="w-full min-w-0">
                         <div class="flex items-center justify-between mb-1">
                             <a href="{{repo.url}}" target="_blank" class="group flex items-center gap-1 no-underline leading-none">
                                 <div class="text-neutral-600">{{repo.owner.username}}</div>
                                 <div class="text-neutral-600">/</div>
                                 <div class="text-neutral-950 group-hover:underline">{{repo.name}}</div>
                             </a>
-                            <div class="text-xs text-neutral-600 font-medium" data-date="{{created_at}}"></div>
+                            <div class="hidden sm:block text-xs text-neutral-600 font-medium" data-date="{{created_at}}"></div>
                         </div>
                         {{#if title}}
-                        <div class="text-sm text-neutral-600">{{title}}</div>
+                        <div class="text-sm text-neutral-600 w-full truncate">{{title}}</div>
                         {{/if}}
                         <div class="flex gap-3 text-neutral-600 text-xs leading-none mt-1">
                             {{#eq state "merged"}}
