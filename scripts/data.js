@@ -140,8 +140,10 @@ export const fetchData = async () => {
                     repo: repo,
                     title: pr.title,
                     url: pr.html_url,
-                    // currently we only support "merged" or "open" as PR state
                     state: pr.pull_request?.merged_at ? "merged" : "open",
+                    created_at: pr.created_at,
+                    updated_at: pr.updated_at,
+                    comments_count: pr.comments || 0,
                 });
                 addedContributions = addedContributions + 1;
             }

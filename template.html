@@ -53,15 +53,17 @@
                         <img src="{{owner.avatar}}" class="w-12 h-12 rounded-md" />
                     </a>
                     <div class="w-full">
-                        <a href="{{url}}" target="_blank" class="group flex items-center gap-1 no-underline leading-none">
-                            <div class="text-neutral-600">{{owner.username}}</div>
-                            <div class="text-neutral-600">/</div>
-                            <div class="text-neutral-950 group-hover:underline">{{name}}</div>
-                        </a>
+                        <div class="mb-1">
+                            <a href="{{url}}" target="_blank" class="group flex items-center gap-1 no-underline leading-none">
+                                <div class="text-neutral-600">{{owner.username}}</div>
+                                <div class="text-neutral-600">/</div>
+                                <div class="text-neutral-950 group-hover:underline">{{name}}</div>
+                            </a>
+                        </div>
                         {{#if description}}
                         <div class="text-sm text-neutral-600">{{description}}</div>
                         {{/if}}
-                        <div class="flex gap-3 flex-wrap text-neutral-600 text-xs leading-none mt-1">
+                        <div class="flex gap-3 flex-wrap text-neutral-600 text-xs leading-none mt-2">
                             {{#if homepage}}
                             <a href="{{homepage}}" target="_blank" class="flex items-center gap-1 group text-neutral-600">
                                 <div class="flex items-center">
@@ -105,11 +107,14 @@
                         <img src="{{repo.owner.avatar}}" class="w-12 h-12 rounded-md" />
                     </a>
                     <div class="w-full">
-                        <a href="{{repo.url}}" target="_blank" class="group flex items-center gap-1 no-underline leading-none">
-                            <div class="text-neutral-600">{{repo.owner.username}}</div>
-                            <div class="text-neutral-600">/</div>
-                            <div class="text-neutral-950 group-hover:underline">{{repo.name}}</div>
-                        </a>
+                        <div class="flex justify-between items-center mb-1">
+                            <a href="{{repo.url}}" target="_blank" class="group flex items-center gap-1 no-underline leading-none">
+                                <div class="text-neutral-600">{{repo.owner.username}}</div>
+                                <div class="text-neutral-600">/</div>
+                                <div class="text-neutral-950 group-hover:underline">{{repo.name}}</div>
+                            </a>
+                            <div class="hidden sm:block text-xs text-neutral-600 font-medium" data-date="{{created_at}}"></div>
+                        </div>
                         {{#if commit.message}}
                         <div class="text-sm text-neutral-600">{{commit.message}}</div>
                         {{/if}}
@@ -146,36 +151,47 @@
                     <a href="{{repo.url}}" target="_blank" class="block w-12 shrink-0">
                         <img src="{{repo.owner.avatar}}" class="w-12 h-12 rounded-md" />
                     </a>
-                    <div class="w-full">
-                        <a href="{{repo.url}}" target="_blank" class="group flex items-center gap-1 no-underline leading-none">
-                            <div class="text-neutral-600">{{repo.owner.username}}</div>
-                            <div class="text-neutral-600">/</div>
-                            <div class="text-neutral-950 group-hover:underline">{{repo.name}}</div>
-                        </a>
+                    <div class="w-full min-w-0">
+                        <div class="flex items-center justify-between mb-1">
+                            <a href="{{repo.url}}" target="_blank" class="group flex items-center gap-1 no-underline leading-none">
+                                <div class="text-neutral-600">{{repo.owner.username}}</div>
+                                <div class="text-neutral-600">/</div>
+                                <div class="text-neutral-950 group-hover:underline">{{repo.name}}</div>
+                            </a>
+                            <div class="hidden sm:block text-xs text-neutral-600 font-medium" data-date="{{created_at}}"></div>
+                        </div>
                         {{#if title}}
-                        <div class="text-sm text-neutral-600">{{title}}</div>
+                        <div class="text-sm text-neutral-600 w-full truncate">{{title}}</div>
                         {{/if}}
                         <div class="flex gap-3 text-neutral-600 text-xs leading-none mt-1">
                             {{#eq state "merged"}}
-                            <a href="{{url}}" target="_blank" class="flex items-center gap-1 group text-violet-600 bg-violet-100 py-1 px-2 rounded-full">
+                            <a href="{{url}}" target="_blank" class="flex items-center gap-1 group text-violet-600 bg-violet-50 border border-violet-600 py-1 px-2 rounded-full">
                                 <div class="flex items-center">
                                     {{=icon "git-pull-request"}}
                                 </div>
-                                <div class="leading-none group-hover:underline group-hover:text-violet-900">
+                                <div class="leading-none group-hover:underline group-hover:text-violet-800">
                                     <span>Merged</span>
                                 </div>
                             </a>
                             {{/eq}}
                             {{#eq state "open"}}
-                            <a href="{{url}}" target="_blank" class="flex items-center gap-1 group text-green-600 bg-green-100 py-1 px-2 rounded-full">
+                            <a href="{{url}}" target="_blank" class="flex items-center gap-1 group text-green-600 bg-green-50 border border-green-600 py-1 px-2 rounded-full">
                                 <div class="flex items-center">
                                     {{=icon "git-pull-request"}}
                                 </div>
-                                <div class="leading-none group-hover:underline group-hover:text-green-900">
+                                <div class="leading-none group-hover:underline group-hover:text-green-800">
                                     <span>Open</span>
                                 </div>
                             </a>
                             {{/eq}}
+                            {{#if comments_count}}
+                            <div class="flex items-center gap-1 text-neutral-600">
+                                <div class="flex items-center">
+                                    {{=icon "message"}}
+                                </div>
+                                <div class="leading-none">{{comments_count}} comments</div>
+                            </div>
+                            {{/if}}
                         </div>
                     </div>
                 </div>
@@ -190,5 +206,25 @@
             </div>
         </footer>
     </div>
+    <script type="text/javascript">
+        // utility method to get the time since the provided date
+        const timeSince = d => {
+            const date = new Date(d);
+            const seconds = Math.floor((new Date() - date) / 1000);
+            const intervals = [31536000, 2592000, 86400, 3600, 60];
+            const values = ["years", "months", "days", "hours", "minutes", "seconds"];
+            for (let i = 0; i < intervals.length; i++) {
+                const interval = seconds / intervals[i];
+                if (interval > 1) {
+                    return [Math.floor(interval), values[i], "ago"].join(" ");
+                }
+            }
+            return [Math.floor(seconds), "seconds", "ago"].join(" ");
+        };
+        // loop for all elements with a 'data-date' attribute
+        Array.from(document.querySelectorAll(`div[data-date]`)).forEach(element => {
+            element.textContent = timeSince(element.dataset.date);
+        });
+    </script>
 </body>
 </html>
