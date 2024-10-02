@@ -142,6 +142,8 @@ export const fetchData = async () => {
                     url: pr.html_url,
                     // currently we only support "merged" or "open" as PR state
                     state: pr.pull_request?.merged_at ? "merged" : "open",
+                    created_at: pr.created_at,
+                    updated_at: pr.updated_at,
                 });
                 addedContributions = addedContributions + 1;
             }
