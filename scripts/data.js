@@ -152,7 +152,7 @@ export const fetchData = async () => {
     if (releasesLimit > 0) {
         data.releases = [];
         const addedReleases = new Set();
-        for (let page = 0; page <= 5 && addedReleases.size < releasesLimit; page++) {
+        for (let page = 0; page < 3 && addedReleases.size < releasesLimit; page++) {
             const eventsRequest = await octokit.request("GET /users/{username}/events", {
                 username: data.user.username,
                 per_page: 100,
@@ -169,7 +169,7 @@ export const fetchData = async () => {
                 const event = events[i];
                 const commit = getReleaseCommit(event.payload.commits);
                 const version = (commit?.message || "").match(/v?(\d+\.\d+\.\d+(?:-[\w.]+)?)\s*$/)?.[1] || "";
-                if (commit && version && !addedReleases.has(event.repo.name)) {
+                if (commit && version && !addedReleases.has(event.repo.name + "/" + version)) {
                     const [owner, name] = event.repo.name.split("/");
                     const repo = await fetchRepo(owner, name);
                     data.releases.push({
@@ -183,7 +183,7 @@ export const fetchData = async () => {
                         },
                         created_at: event.created_at,
                     });
-                    addedReleases.add(event.repo.name);
+                    addedReleases.add(event.repo.name + "/" + version);
                 }
             }
         }
